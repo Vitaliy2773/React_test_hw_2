@@ -1,5 +1,7 @@
 import React from 'react';
 import Counter from './Counter/Counter';
+import DropDown from './DropDown/DropDown';
+import ColorPicker from './ColorPicker/ColorPicker';
 
 const colorPickerOptions = [
   { label: 'red', color: '#F44336' },
@@ -15,11 +17,11 @@ const App = () => {
     <>
       <h1>Стан компонента</h1>
 
-      <Counter />
+      {/* <Counter /> */}
 
-      {/* <Colorpicker options={colorPickerOptions} /> */}
+      <ColorPicker options={colorPickerOptions} />
 
-      {/* <Dropdown /> */}
+      {/* <DropDown /> */}
     </>
   );
 };
