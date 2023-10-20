@@ -1,22 +1,40 @@
 import React, { Component } from 'react';
+import shortid from 'shortid';
 // import Counter from './Counter';
 // import DropDown from './DropDown';
-// import ColorPicker from './ColorPicker';
+import Filter from './Filter/Filter';
+import ColorPicker from './ColorPicker';
 import TodoList from 'TodoList';
 import initialTodos from '../TodoList/todos';
-
-// const colorPickerOptions = [
-//   { label: 'red', color: '#F44336' },
-//   { label: 'green', color: '#4CAF50' },
-//   { label: 'blue', color: '#2196F3' },
-//   { label: 'grey', color: '#607D8B' },
-//   { label: 'pink', color: '#E91E63' },
-//   { label: 'indigo', color: '#3F51B5' },
-// ];
+import TodoEditor from './TodoEditor/TodoEditor';
+import Form from './Form/Form';
+const colorPickerOptions = [
+  { label: 'red', color: '#F44336' },
+  { label: 'green', color: '#4CAF50' },
+  { label: 'blue', color: '#2196F3' },
+  { label: 'grey', color: '#607D8B' },
+  { label: 'pink', color: '#E91E63' },
+  { label: 'indigo', color: '#3F51B5' },
+];
 
 class App extends Component {
   state = {
     todos: initialTodos,
+    // name: '',
+    // tag: '',
+    filter: '',
+  };
+
+  addTodo = text => {
+    const todo = {
+      id: shortid.generate(),
+      text,
+      completed: false,
+    };
+
+    this.setState(prevState => ({
+      todos: [todo, ...prevState.todos],
+    }));
   };
 
   deleteTodo = todoId => {
@@ -25,8 +43,26 @@ class App extends Component {
     }));
   };
 
+  formSubmitHandler = data => {
+    console.log(data);
+  };
+
+  changeFilter = e => {
+    this.setState({ filter: e.currentTarget.value });
+  };
+
+  getVisibleTodos = () => {
+    const { filter, todos } = this.state;
+
+    const normalizedFilter = filter.toLowerCase();
+
+    return todos.filter(todo =>
+      todo.text.toLowerCase().includes(normalizedFilter)
+    );
+  };
+
   render() {
-    const { todos } = this.state;
+    const { todos, filter } = this.state;
 
     const totalTodoCount = todos.length;
     const completedTodoCount = todos.reduce(
@@ -34,8 +70,11 @@ class App extends Component {
       0
     );
 
+    const visibleTodos = this.getVisibleTodos();
+
     return (
       <>
+        <TodoEditor onSubmit={this.addTodo} />
         <h1>Стан компонента</h1>
 
         {/* <Counter initialValue={10} /> */}
@@ -47,7 +86,20 @@ class App extends Component {
           <p>Кількість виконаних: {completedTodoCount}</p>
         </div>
 
-        <TodoList todos={todos} onDeleteTodo={this.deleteTodo} />
+        <Filter value={filter} onChange={this.changeFilter} />
+
+        <TodoList todos={visibleTodos} onDeleteTodo={this.deleteTodo} />
+        {/* <ColorPicker
+          options={[
+            { label: 'red', color: '#F44336' },
+            { label: 'green', color: '#4CAF50' },
+            { label: 'blue', color: '#2196F3' },
+            { label: 'grey', color: '#607D8B' },
+            { label: 'pink', color: '#E91E63' },
+            { label: 'indigo', color: '#3F51B5' },
+          ]}
+        />
+        <Form onSubmitProp={this.formSubmitHandler} />; */}
       </>
     );
   }
